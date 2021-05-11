@@ -14,13 +14,14 @@ public class Main {
 	private static Tablero tablero = new Tablero();
 	private static Jugador jugador1 = new Jugador("| X |");
 	private static Jugador jugador2 = new Jugador("| O |");
+	private static boolean fin = false;
 	
 	public static void main(String[] args) {
 		bienvenidaYTirarDado();
-		do {
+		do{
 			jugar(jugador1);
 			jugar(jugador2);
-		}while(!comprobacion());
+		}while(!fin);
 	}
 	
 	/*
@@ -48,7 +49,7 @@ public class Main {
 		}
 		while(dado1 == dado2);
 		
-		//Asignar las variables nombre a los jugadores
+		//Asignar las variables nombre a los jugadores dependiendo del numero del dado
 		if(dado1 > dado2) {
 			jugador1.setNombre(nombre1);
 			jugador2.setNombre(nombre2);
@@ -61,38 +62,49 @@ public class Main {
 		tablero.llenarTablero();
 	}
 
+	/*
+	 * 
+	 */
 	public static void jugar(Jugador jugador) {
-		int a = 0;
-		int b = 0;
-		tablero.imprimirTablero();
-		System.out.println("Turno de " + jugador.getNombre() + "\nIntroduce la letra y el numero separados por un espacio");
-		// No consigo que se pare ahi.
-		String coordenadas = scn.nextLine();
-		if(coordenadas.matches("[A-Ca-c] [1-3]")) {
-			String[] posicion = coordenadas.split(" ");
-			switch(posicion[0].toLowerCase()) {
-			case "a":
-				a = 0;
-				break;
-			case "b":
-				a = 1;
-				break;
-			case "c":
-				a = 2;
-				break;
+		if(fin == false) {
+			int a = 0;
+			int b = 0;
+			tablero.imprimirTablero();
+			System.out.println("Turno de " + jugador.getNombre() + "\nIntroduce la letra y el numero juntos sin separacion");
+			// No consigo que se pare ahi con scn.nextLine()
+			String coordenadas = scn.next().trim();
+			if(coordenadas.matches("[A-Ca-c][1-3]")) {
+				String fila = coordenadas.substring(0, 1);
+				String columna = coordenadas.substring(1, 2);
+				switch(fila.toLowerCase()) {
+				case "a":
+					a = 0;
+					break;
+				case "b":
+					a = 1;
+					break;
+				case "c":
+					a = 2;
+					break;
+				}
+	
+				b = Integer.parseInt(columna) - 1;
+				if(tablero.comprobarPosicion(a, b).equals("| _ |")) {
+					tablero.ponerFicha(jugador, a, b);
+				}
+				if(tablero.comprobarPosicion(a, b).equals(jugador1.getFicha())) {
+					System.out.println("\n" + jugador1.getNombre() + " ya ha colocado ahí una ficha, coloca la ficha en una posición libre");
+				}
+				if(tablero.comprobarPosicion(a, b).equals(jugador2.getFicha())) {
+					System.out.println("\n" + jugador2.getNombre() + " ya ha colocado ahí una ficha, coloca la ficha en una posición libre");
+				}
 			}
-
-			b = Integer.parseInt(posicion[1]) - 1;
-			if(tablero.comprobarPosicion(a, b).equals("| _ |")) {
-				tablero.ponerFicha(jugador, a, b);
-			}
+			fin = tablero.comprobacion();
+		}
+		else {
+			scn.close();
+			tablero.imprimirTablero();
+			System.out.println("¡Se acabo! Ha ganado " + jugador.getNombre());
 		}
 	}
-	
-	public static boolean comprobacion() {
-		boolean acabado = false;
-		
-		return acabado;
-	}
-	
 }
