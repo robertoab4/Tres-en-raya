@@ -1,68 +1,98 @@
 /*
  * @author Roberto Alarcon Bardon
- * @version 07-05-2021
+ * @version 11-05-2021
  */
 
 package CDM1.RobertoAlarcon;
-import java.util.Arrays;
 import java.util.Scanner;
 import java.util.Random;
 
 public class Main {
 
-	private static Scanner scn;
-	private static Random random;
-	private static Tablero tablero;
+	private static Scanner scn = new Scanner(System.in);
+	private static Random random = new Random();
+	private static Tablero tablero = new Tablero();
+	private static Jugador jugador1 = new Jugador("| X |");
+	private static Jugador jugador2 = new Jugador("| O |");
 	
 	public static void main(String[] args) {
-		scn = new Scanner(System.in);
-		random = new Random();
-		Jugador jugador1 = new Jugador();
-		Jugador jugador2 = new Jugador();
-		bienvenida(jugador1, jugador2);
+		bienvenidaYTirarDado();
 		do {
-			tirarDado(jugador1);
-			tirarDado(jugador2);
-		}while(jugador1.getNumero() == jugador2.getNumero());
-		orden(jugador1, jugador2);
+			jugar(jugador1);
+			jugar(jugador2);
+		}while(!comprobacion());
 	}
 	
 	/*
-	 * Imprime la bienvenida al juego y pide el nombre de los dos jugadores.
+	 * Imprime la bienvenida al juego, pide el nombre de los dos jugadores, tira el dado para ver quien empieza y asigna los nombres a los atributos jugadores
 	 */
-	public static void bienvenida(Jugador jugador1, Jugador jugador2) {
+	public static void bienvenidaYTirarDado() {
+		
+		String nombre1, nombre2;
+		int dado1, dado2;
+		//Bienvenida
 		System.out.println("Bienvenid@s, vamos a juagr al 3 en raya.");
 		System.out.println("Nombre del primer jugad@r: ");
-		jugador1.setNombre(scn.next());
+		nombre1 = scn.next();
 		System.out.println("\nNombre del segundo jugad@r: ");
-		jugador2.setNombre(scn.next());		
-	}
-	
-	/*
-	 * Tira un dado del 1 al 6 para un jugador.
-	 */
-	public static int tirarDado(Jugador jugador) {
-		System.out.println("\nVamos a tirar el dado de " + jugador.getNombre());
-		jugador.setNumero(random.nextInt(7));
-		System.out.println("\nA " + jugador.getNombre() + " le ha salido un " + jugador.getNumero());
-		return jugador.getNumero();
-	}
-	
-	public static void orden(Jugador jugador1, Jugador jugador2) {
+		nombre2 = scn.next();
 		
-		if(jugador1.getNumero() > jugador2.getNumero()) {
-			jugador1.setFicha("X");
-			jugador2.setFicha("O");
-			System.out.println("\n" + jugador1.getNombre() + " empieza con las fichas " + jugador1.getFicha());
+		//Tirar el dado
+		do {
+			System.out.println("\nVamos a tirar el dado de " + nombre1);
+			dado1 = random.nextInt(6) + 1;
+			System.out.println("\nA " + nombre1 + " le ha salido un " + dado1);
+			System.out.println("\nVamos a tirar el dado de " + nombre2);
+			dado2 = random.nextInt(6) + 1;
+			System.out.println("\nA " + nombre2 + " le ha salido un " + dado2);
+		}
+		while(dado1 == dado2);
+		
+		//Asignar las variables nombre a los jugadores
+		if(dado1 > dado2) {
+			jugador1.setNombre(nombre1);
+			jugador2.setNombre(nombre2);
+		}
+		else {
+			jugador1.setNombre(nombre2);
+			jugador2.setNombre(nombre1);
 		}
 		
-		if(jugador2.getNumero() > jugador1.getNumero()) {
-			jugador2.setFicha("X");
-			jugador1.setFicha("O");
-			System.out.println("\n" + jugador2.getNombre() + " empieza con las fichas " + jugador2.getFicha());
-		}
-		
-		System.out.println("\nComienza el juego");
+		tablero.llenarTablero();
 	}
 
+	public static void jugar(Jugador jugador) {
+		int a = 0;
+		int b = 0;
+		tablero.imprimirTablero();
+		System.out.println("Turno de " + jugador.getNombre() + "\nIntroduce la letra y el numero separados por un espacio");
+		// No consigo que se pare ahi.
+		String coordenadas = scn.nextLine();
+		if(coordenadas.matches("[A-Ca-c] [1-3]")) {
+			String[] posicion = coordenadas.split(" ");
+			switch(posicion[0].toLowerCase()) {
+			case "a":
+				a = 0;
+				break;
+			case "b":
+				a = 1;
+				break;
+			case "c":
+				a = 2;
+				break;
+			}
+
+			b = Integer.parseInt(posicion[1]) - 1;
+			if(tablero.comprobarPosicion(a, b).equals("| _ |")) {
+				tablero.ponerFicha(jugador, a, b);
+			}
+		}
+	}
+	
+	public static boolean comprobacion() {
+		boolean acabado = false;
+		
+		return acabado;
+	}
+	
 }
