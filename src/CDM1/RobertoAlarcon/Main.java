@@ -1,6 +1,10 @@
 /*
  * @author Roberto Alarcon Bardon
- * @version 11-05-2021
+ * @version 12-05-2021
+ */
+
+/*
+ * Si gana el jugador2 se para la ejecucion del programa, no imprime el tablero ni dice quien gana, simplemente se para el escaner
  */
 
 package CDM1.RobertoAlarcon;
@@ -14,14 +18,16 @@ public class Main {
 	private static Tablero tablero = new Tablero();
 	private static Jugador jugador1 = new Jugador("| X |");
 	private static Jugador jugador2 = new Jugador("| O |");
-	private static boolean fin = false;
+	private static boolean finPartida = false;
+	//private static boolean finJuego = false;
 	
 	public static void main(String[] args) {
+
 		bienvenidaYTirarDado();
 		do{
 			jugar(jugador1);
 			jugar(jugador2);
-		}while(!fin);
+		}while(!finPartida);
 	}
 	
 	/*
@@ -58,7 +64,6 @@ public class Main {
 			jugador1.setNombre(nombre2);
 			jugador2.setNombre(nombre1);
 		}
-		
 		tablero.llenarTablero();
 	}
 
@@ -66,7 +71,11 @@ public class Main {
 	 * 
 	 */
 	public static void jugar(Jugador jugador) {
-		if(fin == false) {
+		// Quizas un do while es mas logico aqui en jugar y no en el main
+		finPartida = tablero.comprobacion();
+		if(finPartida == false) {
+			// Hay que intentar quitar de aqui estas variables
+			//Quizas sea mejor repetir un poco de codigo para cada jugador que todo en este metodo, o hacer 1 metodo privado
 			int a = 0;
 			int b = 0;
 			tablero.imprimirTablero();
@@ -88,23 +97,38 @@ public class Main {
 					break;
 				}
 	
+				// Todo eso es un puto lio de aqui para abajo
 				b = Integer.parseInt(columna) - 1;
-				if(tablero.comprobarPosicion(a, b).equals("| _ |")) {
-					tablero.ponerFicha(jugador, a, b);
-				}
 				if(tablero.comprobarPosicion(a, b).equals(jugador1.getFicha())) {
 					System.out.println("\n" + jugador1.getNombre() + " ya ha colocado ahí una ficha, coloca la ficha en una posición libre");
 				}
 				if(tablero.comprobarPosicion(a, b).equals(jugador2.getFicha())) {
 					System.out.println("\n" + jugador2.getNombre() + " ya ha colocado ahí una ficha, coloca la ficha en una posición libre");
 				}
+				if(tablero.comprobarPosicion(a, b).equals("| _ |")) {
+					tablero.ponerFicha(jugador, a, b);
+				}
+				else {
+					jugar(jugador);
+				}
+				
 			}
-			fin = tablero.comprobacion();
+			else {
+				System.out.println("\nHas introducido mal la posicion, introducela bien.");
+				jugar(jugador);
+			}
 		}
 		else {
-			scn.close();
 			tablero.imprimirTablero();
 			System.out.println("¡Se acabo! Ha ganado " + jugador.getNombre());
+			scn.close();
+			//System.out.println("¿Quereis seguir jugando? Escribe si o no.");
+			/*String seguir = scn.next().trim().toLowerCase();
+			if(seguir.equals("no")) {
+				System.out.println("¡Adios!");
+				finJuego = true;
+				scn.close();
+			}	*/		
 		}
 	}
 }
