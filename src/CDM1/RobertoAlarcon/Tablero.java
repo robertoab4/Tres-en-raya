@@ -1,28 +1,30 @@
 /*
  * @author Roberto Alarcon Bardon
- * @version 11-05-2021
+ * @version 12-05-2021
  */
 
 package CDM1.RobertoAlarcon;
 
 public class Tablero {
-
+	
+	public final int FILAS = 3;
+	public final int COLUMNAS = 3;
 	private String[][] tablero;
 	
 	/*
 	 * Constructor dela clase Tablero
 	 */
 	public Tablero() {
-		this.tablero = new String[3][3];
+		this.tablero = new String[FILAS][COLUMNAS];
 	}
 
 	/*
-	 * Llena los huecos del tablero
+	 * "Escribe" en cada hueco del tablero una barra baja (| _ |) para que al imprimirlo quede "bonito" y parezca que esta vacio
 	 */
 	public void llenarTablero() {
 		
-		for (int i = 0; i < tablero.length; i++) {
-			for (int j = 0; j < tablero[0].length; j++) {
+		for (int i = 0; i < FILAS; i++) {
+			for (int j = 0; j < COLUMNAS; j++) {
 				tablero[i][j] = "| _ |";
 			}
 		}
@@ -34,8 +36,13 @@ public class Tablero {
 	 * @param a La coordenada de la fila
 	 * @param b La coordenada de la columna
 	 */
-	public void ponerFicha(Jugador jugador, int a, int b) {
-		tablero[a][b] = jugador.getFicha();
+	public boolean ponerFicha(Jugador jugador, int a, int b) {
+		boolean puesta = false;
+		if(tablero[a][b].equals("| _ |")) {
+			tablero[a][b] = jugador.getFicha();
+			puesta = true;
+		}
+		return puesta;
 	}
 	
 	/*
@@ -56,7 +63,7 @@ public class Tablero {
 		String letra = "";
 		System.out.println("\nTablero: ");
 		System.out.println("    1    2    3  ");
-		for (int i = 0; i < tablero.length; i++) {
+		for (int i = 0; i < FILAS; i++) {
 			switch(i) {
 				case 0:
 					letra = "A ";

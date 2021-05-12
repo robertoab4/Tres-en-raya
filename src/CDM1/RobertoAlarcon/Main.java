@@ -3,10 +3,6 @@
  * @version 12-05-2021
  */
 
-/*
- * Si gana el jugador2 se para la ejecucion del programa, no imprime el tablero ni dice quien gana, simplemente se para el escaner
- */
-
 package CDM1.RobertoAlarcon;
 import java.util.Scanner;
 import java.util.Random;
@@ -18,16 +14,22 @@ public class Main {
 	private static Tablero tablero = new Tablero();
 	private static Jugador jugador1 = new Jugador("| X |");
 	private static Jugador jugador2 = new Jugador("| O |");
-	private static boolean finPartida = false;
-	//private static boolean finJuego = false;
 	
 	public static void main(String[] args) {
 
 		bienvenidaYTirarDado();
-		do{
+		boolean finPartida;
+		do {
 			jugar(jugador1);
+			finPartida = tablero.comprobacion();
+			if(finPartida) {
+				break; // Para que se salga del bucle y no haga la ejecucion de "jugar(juador2);"
+			}
 			jugar(jugador2);
+			finPartida = tablero.comprobacion();
 		}while(!finPartida);
+		 
+		scn.close();
 	}
 	
 	/*
@@ -68,23 +70,23 @@ public class Main {
 	}
 
 	/*
-	 * 
+	 * El jugador pasado como parametro coloca una ficha
+	 * @param jugador El jugador que tiene el turno
 	 */
 	public static void jugar(Jugador jugador) {
-		// Quizas un do while es mas logico aqui en jugar y no en el main
-		finPartida = tablero.comprobacion();
-		if(finPartida == false) {
-			// Hay que intentar quitar de aqui estas variables
-			//Quizas sea mejor repetir un poco de codigo para cada jugador que todo en este metodo, o hacer 1 metodo privado
-			int a = 0;
-			int b = 0;
+		
+		boolean fin; // Para comprobar si hay 3 en raya e imprimir el nombre del ganador
+		boolean puesta = false; // Comprueba si la ficha ha sido colocada correctamente o no
+		
+		do {
 			tablero.imprimirTablero();
-			System.out.println("Turno de " + jugador.getNombre() + "\nIntroduce la letra y el numero juntos sin separacion");
-			// No consigo que se pare ahi con scn.nextLine()
-			String coordenadas = scn.next().trim();
-			if(coordenadas.matches("[A-Ca-c][1-3]")) {
-				String fila = coordenadas.substring(0, 1);
-				String columna = coordenadas.substring(1, 2);
+			System.out.println("Turno de " + jugador.getNombre() + "\nIntroduce la letra y el número juntos sin separación");
+			String posicion = scn.next().trim();
+			if(posicion.matches("[A-Ca-c][1-3]")) {
+				int a = 0;
+				int b = 0;
+				String fila = posicion.substring(0, 1);
+				String columna = posicion.substring(1, 2);
 				switch(fila.toLowerCase()) {
 				case "a":
 					a = 0;
@@ -96,39 +98,25 @@ public class Main {
 					a = 2;
 					break;
 				}
-	
-				// Todo eso es un puto lio de aqui para abajo
 				b = Integer.parseInt(columna) - 1;
-				if(tablero.comprobarPosicion(a, b).equals(jugador1.getFicha())) {
+				if(tablero.comprobarPosicion(a, b).equals("| _ |")) {
+					puesta = tablero.ponerFicha(jugador, a, b);
+				}
+				else if(tablero.comprobarPosicion(a, b).equals(jugador1.getFicha())) {
 					System.out.println("\n" + jugador1.getNombre() + " ya ha colocado ahí una ficha, coloca la ficha en una posición libre");
 				}
-				if(tablero.comprobarPosicion(a, b).equals(jugador2.getFicha())) {
+				else if(tablero.comprobarPosicion(a, b).equals(jugador2.getFicha())) {
 					System.out.println("\n" + jugador2.getNombre() + " ya ha colocado ahí una ficha, coloca la ficha en una posición libre");
 				}
-				if(tablero.comprobarPosicion(a, b).equals("| _ |")) {
-					tablero.ponerFicha(jugador, a, b);
-				}
-				else {
-					jugar(jugador);
-				}
 				
+			}else {
+				System.out.println("\nHas introducido mal la posición, introducela bien.");
 			}
-			else {
-				System.out.println("\nHas introducido mal la posicion, introducela bien.");
-				jugar(jugador);
-			}
-		}
-		else {
+		}while(!puesta);
+		fin = tablero.comprobacion();
+		if(fin) {
 			tablero.imprimirTablero();
-			System.out.println("¡Se acabo! Ha ganado " + jugador.getNombre());
-			scn.close();
-			//System.out.println("¿Quereis seguir jugando? Escribe si o no.");
-			/*String seguir = scn.next().trim().toLowerCase();
-			if(seguir.equals("no")) {
-				System.out.println("¡Adios!");
-				finJuego = true;
-				scn.close();
-			}	*/		
+			System.out.println("¡Ha ganado " + jugador.getNombre() + "!");
 		}
 	}
 }
