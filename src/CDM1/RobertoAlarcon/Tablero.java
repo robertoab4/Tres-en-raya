@@ -82,7 +82,7 @@ public class Tablero {
 	}
 	
 	/*
-	 * 
+	 * Comprueba si hay tres en raya o no
 	 */
 	public boolean comprobacion() {
 		boolean fin = false;
@@ -114,7 +114,7 @@ public class Tablero {
 		else if (((tablero[0][0].equals(tablero[1][1])) && (tablero[0][0].equals(tablero[2][2])) && (tablero[0][0]) != "| _ |")) {
 			fin = true;
 		}
-		// Comprobacion de que la diagonal pricipal sea igual
+		// Comprobacion de que la diagonal no pricipal sea igual
 		else if (((tablero[2][0].equals(tablero[1][1])) && (tablero[2][0].equals(tablero[0][2])) && (tablero[2][0]) != "| _ |")) {
 			fin = true;
 		}
